@@ -50,7 +50,7 @@ public class SkiTests {
 	public void testLongestPathOnSmallMap() {
 		int[][] matrix = getSmallMatrix();
 		
-		Path bestPath = ski.getLongestPath(matrix);
+		Path bestPath = ski.getLongestPath(matrix, 4, 4);
 		Assertions.assertThat(bestPath.getNodes().size()).isEqualTo(5);
 		Assertions.assertThat(bestPath.getSteep()).isEqualTo(8);
 	}
@@ -97,7 +97,7 @@ public class SkiTests {
 			e.printStackTrace();
 		}
 		
-		Path bestPath = ski.getLongestPath(matrix);
+		Path bestPath = ski.getLongestPath(matrix, columns, rows);
 		System.out.println("Number of nodes " + bestPath.getNodes().size());
 		System.out.println("Steep value " + bestPath.getSteep());
 		System.out.println(bestPath.getNodes());

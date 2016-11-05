@@ -10,15 +10,17 @@ public class Ski {
 	 * Find in a map (2d array of int) the longest descending path with highest steep.
 	 * @see http://geeks.redmart.com/2015/01/07/skiing-in-singapore-a-coding-diversion/
 	 * @param matrix 2d array of integers representing a ski map with elevation
+	 * @param width Width of map
+	 * @param height Height of map
 	 * @return Longest path with highest steep.
 	 */
-	public Path getLongestPath(int[][] matrix) {
+	public Path getLongestPath(int[][] matrix, int width, int height) {
 	
 		Path bestPath = new Path();
 		bestPath.setNodes(new ArrayList<>());
 		
-		for (int x=0; x<matrix.length; x++) {
-			for (int y=0; y<matrix[x].length; y++) {
+		for (int y=0; y<height; y++) {
+			for (int x=0; x<width; x++) {
 				dive(bestPath, new ArrayList<>(), matrix, x, y);
 			}
 		}
@@ -37,34 +39,34 @@ public class Ski {
 	 */
 	public void dive(Path bestPath, List<Integer> currentPath, int[][] matrix, int currentX, int currentY) {
 		
-		int currentValue = matrix[currentX][currentY];
+		int currentValue = readInMatrix(matrix, currentX, currentY);
 		boolean canGoDeeper = false;
 		currentPath.add(currentValue);
 		
-		
-		// Down
-		if (currentX+1 <= matrix.length-1 && matrix[currentX+1][currentY] < currentValue) {
-			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX+1, currentY);
-			canGoDeeper = true;
-		}
-		
 		// Up
-		if (currentX-1 >= 0 && matrix[currentX-1][currentY] < currentValue) {
-			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX-1, currentY);
-			canGoDeeper = true;
-		}
-		
-		// Left
-		if (currentY-1 >= 0 && matrix[currentX][currentY-1] < currentValue) {
+		if (existInMatrix(matrix, currentX, currentY-1) && readInMatrix(matrix, currentX, currentY-1) < currentValue) {
 			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX, currentY-1);
 			canGoDeeper = true;
 		}
 		
 		// Right
-		if (currentY+1 <= matrix[currentX].length-1 && matrix[currentX][currentY+1] < currentValue) {
-			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX, currentY+1);
+		if (existInMatrix(matrix, currentX+1, currentY) && readInMatrix(matrix, currentX+1, currentY) < currentValue) {
+			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX+1, currentY);
 			canGoDeeper = true;
 		}
+		
+		// Down
+		if (existInMatrix(matrix, currentX, currentY+1) && readInMatrix(matrix, currentX, currentY+1) < currentValue) {
+			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX, currentY+1);
+			canGoDeeper = true;
+		}		
+		
+		// Left
+		if (existInMatrix(matrix, currentX-1, currentY) && readInMatrix(matrix, currentX-1, currentY) < currentValue) {
+			dive(bestPath, new ArrayList<>(currentPath), matrix, currentX-1, currentY);
+			canGoDeeper = true;
+		}
+		
 		
 		if (!canGoDeeper) {
 			int steep = currentPath.get(0) - currentPath.get(currentPath.size()-1);
@@ -72,10 +74,20 @@ public class Ski {
 			int bestNodeLength = bestPath.getNodes().size();
 			int bestSteep = bestPath.getSteep();
 			
-			if (nodes >= bestNodeLength && steep > bestSteep) {
+			if (nodes > bestNodeLength || nodes == bestNodeLength && steep > bestSteep) {
 				bestPath.setNodes(currentPath);
 			}
 		}
 	}
+	
+	public int readInMatrix(int[][] matrix, int x, int y) {
+		return matrix[y][x];
+	}
+	
+	public boolean existInMatrix(int[][] matrix, int x, int y) {
+		boolean isRow = y >= 0 && y < matrix.length;
+		return isRow && matrix[y].length > x && x > 0; 
+	}
+	
 	
 }
